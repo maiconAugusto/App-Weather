@@ -6,6 +6,7 @@ import {
   Platform,
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
+import {PERMISSIONS, check} from 'react-native-permissions';
 import moment from 'moment';
 import {
   Container,
@@ -76,6 +77,7 @@ const Home = () => {
             getAddress(latitude, longitude),
           ]);
           if (erro) {
+            console.log(erro);
             setLoading(false);
             Alert.alert(
               'Atenção!',
@@ -93,20 +95,33 @@ const Home = () => {
         );
       }
     } else if (Platform.OS === 'ios') {
-      Geolocation.getCurrentPosition((info, erro) => {
-        const {latitude, longitude} = info.coords;
-        Promise.all([
-          getWeather(latitude, longitude),
-          getAddress(latitude, longitude),
-        ]);
-        if (erro) {
-          setLoading(false);
-          Alert.alert(
-            'Atenção!',
-            'Não foi possivel obter sua  localização neste momento!'
-          );
-        }
-      });
+      const granted = await check(
+        PERMISSIONS.IOS.LOCATION_ALWAYS || PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+      );
+      if (granted === 'granted') {
+        Geolocation.getCurrentPosition((info, erro) => {
+          const {latitude, longitude} = info.coords;
+          Promise.all([
+            getWeather(latitude, longitude),
+            getAddress(latitude, longitude),
+          ]);
+          if (erro) {
+            setLoading(false);
+            Alert.alert(
+              'Atenção!',
+              'Não foi possivel obter sua  localização neste momento!'
+            );
+          }
+        });
+      } else {
+        setLoading(false);
+        setLoadingButton(false);
+        setError(true);
+        Alert.alert(
+          'Atenção!',
+          'Não foi possivel obter sua  localização neste momento,'
+        );
+      }
     }
   }
 
