@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import Home from './src/page/index';
+import Home from './src/page/home/index';
 
 const App = () => {
   return <Home />;

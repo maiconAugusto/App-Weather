@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, ActivityIndicator} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
+import moment from 'moment';
 import {Container, Body, Temp, Text, Button, TextButton, Column} from './style';
-import api from '../services/api';
-import {keyWeather, KeyGoogle} from '../config/key';
+import api from '../../services/api';
+import 'moment/locale/pt-br';
+import {keyWeather, KeyGoogle} from '../../config/key';
 
 const Home = () => {
   const [data, setData] = useState('');
-  const [date, setDate] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const [firstAccess, setFirtAccess] = useState(false);
@@ -38,9 +39,11 @@ const Home = () => {
     setState(addressFormated[4].long_name);
     setCountry(addressFormated[5].long_name);
   }
-  function getLocation() {
+  async function getLocation() {
     setLoading(true);
+
     Geolocation.getCurrentPosition((info, erro) => {
+      console.log(info);
       const {latitude, longitude} = info.coords;
       Promise.all([
         getWeather(latitude, longitude),
@@ -50,15 +53,10 @@ const Home = () => {
         setLoading(false);
         Alert.alert(
           'Atenção!',
-          'Não foi possivel obter sua localização neste momento!'
+          'Não foi possivel obter sua  localização neste momento!'
         );
       }
     });
-  }
-  function getDate() {
-    const dateNow = new Date().toLocaleString('pt-BR');
-    const day = dateNow.split(' ');
-    setDate(day[0]);
   }
   useEffect(() => {
     if (firstAccess) {
@@ -69,9 +67,6 @@ const Home = () => {
     getLocation();
   }, []);
 
-  useEffect(() => {
-    getDate();
-  }, []);
   return (
     <Container>
       <Body>
@@ -101,7 +96,7 @@ const Home = () => {
               {data === '' ? '' : data.main.temp_max.toFixed(1)}
             </Text>
             <Text> Pressão {data === '' ? '' : data.main.pressure}</Text>
-            <Text>{date}</Text>
+            <Text>{moment().format('DD/MM/YYYY')}</Text>
           </Column>
         )}
         {firstAccess ? (

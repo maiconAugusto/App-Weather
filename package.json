@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-native-community/geolocation": "^2.0.2",
     "axios": "^0.21.1",
+    "moment": "^2.29.1",
     "react": "16.13.1",
     "react-native": "0.63.4",
     "styled-components": "^5.2.1"

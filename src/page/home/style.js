@@ -35,7 +35,7 @@ export const Button = styled.TouchableOpacity`
   justify-content: center;
   width: 90%;
   background-color: #7473d6;
-  border-radius: 6px;
+  border-radius: 4px;
 `;
 export const TextButton = styled.Text`
   font-size: 16px;
