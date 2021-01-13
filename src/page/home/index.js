@@ -201,12 +201,12 @@ const Home = () => {
                 <Text>{country}</Text>
                 <Text style={{marginTop: 16}}>
                   {' '}
-                  Temperatura max.{' '}
+                  Temperatura máx.{' '}
                   {data === '' ? '' : data.main.temp_min.toFixed(1)}
                 </Text>
                 <Text>
                   {' '}
-                  Temperatura min.{' '}
+                  Temperatura mín.{' '}
                   {data === '' ? '' : data.main.temp_max.toFixed(1)}
                 </Text>
                 <Text> Pressão {data === '' ? '' : data.main.pressure}</Text>
