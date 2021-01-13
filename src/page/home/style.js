@@ -43,3 +43,9 @@ export const TextButton = styled.Text`
   color: white;
   font-weight: 600;
 `;
+export const View = styled.View`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background-color: white;
+`;
