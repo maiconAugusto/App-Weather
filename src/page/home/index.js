@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import {PERMISSIONS, check} from 'react-native-permissions';
+import OpenAppSettings from 'react-native-app-settings';
 import moment from 'moment';
 import {
   Container,
@@ -95,10 +96,37 @@ const Home = () => {
         );
       }
     } else if (Platform.OS === 'ios') {
-      const granted = await check(
-        PERMISSIONS.IOS.LOCATION_ALWAYS || PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
-      );
-      if (granted === 'granted') {
+      const grantedWhen = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+      const granted = await check(PERMISSIONS.IOS.LOCATION_ALWAYS);
+
+      if (
+        granted === 'denied' ||
+        granted === 'granted' ||
+        grantedWhen === 'denied' ||
+        grantedWhen === 'blocked'
+      ) {
+        setLoading(false);
+        setLoadingButton(false);
+        setError(true);
+        Alert.alert(
+          'Permissão negada',
+          'Permissão para acessar a localização foi negada, sem essa autorização não é possível obter sua localização. Estamos redirecionando você para as configurações do APLICATIVO, clique em localização e altere a permissão e depois clique em tente novamente!',
+          [
+            {
+              text: 'Cancelar',
+              onPress: () => {},
+              style: 'cancel',
+            },
+            {
+              text: 'OK',
+              onPress: () => {
+                OpenAppSettings.open();
+              },
+            },
+          ],
+          {cancelable: false}
+        );
+      } else if (granted === 'granted') {
         Geolocation.getCurrentPosition((info, erro) => {
           const {latitude, longitude} = info.coords;
           Promise.all([
@@ -113,17 +141,16 @@ const Home = () => {
             );
           }
         });
-      } else {
-        setLoading(false);
-        setLoadingButton(false);
-        setError(true);
-        Alert.alert(
-          'Atenção!',
-          'Não foi possivel obter sua  localização neste momento,'
-        );
       }
     }
   }
+
+  useEffect(() => {
+    Geolocation.setRNConfiguration({
+      authorizationLevel: 'always',
+      skipPermissionRequests: false,
+    });
+  }, []);
 
   useEffect(() => {
     if (firstAccess) {
