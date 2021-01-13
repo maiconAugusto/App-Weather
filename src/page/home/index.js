@@ -78,7 +78,6 @@ const Home = () => {
             getAddress(latitude, longitude),
           ]);
           if (erro) {
-            console.log(erro);
             setLoading(false);
             Alert.alert(
               'Atenção!',
